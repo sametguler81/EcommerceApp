@@ -61,6 +61,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -78,6 +79,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavType
@@ -362,14 +364,18 @@ fun UserPageChanges(viewModel: EcommerceViewModel) {
         ) {
             val json = it.arguments?.getString("item")
             val itemG = Gson().fromJson(json, Products::class.java)
-            DetailItemPage(navController, itemG)
+            DetailItemPage(navController, itemG, viewModel)
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailItemPage(navController: NavController, products: Products) {
+fun DetailItemPage(
+    navController: NavController,
+    products: Products,
+    viewModel: EcommerceViewModel
+) {
     val context = LocalContext.current
     val scrollState = rememberScrollState()
     Scaffold(
@@ -596,7 +602,19 @@ fun DetailItemPage(navController: NavController, products: Products) {
                                     containerColor = Color.White,
                                     contentColor = Color.Black,
                                 ),
-                                onClick = {},
+                                onClick = {
+                                    val currentUserId = viewModel.currentUser.value.user_id
+                                    viewModel.addShoppingCart(
+                                        user_id = currentUserId,
+                                        product_id = products.product_id,
+                                        quantity = 1
+                                    )
+                                    navController.navigate("userHome") {
+                                        popUpTo(route = "userHome") {
+                                            inclusive = true
+                                        }
+                                    }
+                                },
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(top = 15.dp)
@@ -879,14 +897,9 @@ fun userHomePage(viewModel: EcommerceViewModel, navController: NavController) {
 }
 
 @Composable
-fun userCartPage() {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("User Cart Page")
-    }
+fun userCartPage(viewModel: EcommerceViewModel) {
+
+
 }
 
 @Composable
@@ -904,7 +917,7 @@ fun userProfilePage() {
 fun ContentScreen(index: Int, viewModel: EcommerceViewModel, navController: NavController) {
     when (index) {
         0 -> userHomePage(viewModel, navController)
-        1 -> userCartPage()
+        1 -> userCartPage(viewModel)
         2 -> userProfilePage()
     }
 }

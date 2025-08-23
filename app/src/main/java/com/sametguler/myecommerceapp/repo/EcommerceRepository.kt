@@ -1,8 +1,10 @@
 package com.sametguler.myecommerceapp.repo
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.sametguler.myecommerceapp.model.Products
 import com.sametguler.myecommerceapp.model.ShoppingCart
+import com.sametguler.myecommerceapp.model.Users
 import com.sametguler.myecommerceapp.service.ApiUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -15,10 +17,22 @@ class EcommerceRepository {
     val dao = ApiUtils.getEcommerceDaoInterface()
     val productsGelen = MutableLiveData<List<Products>>()
     val currentUserRole = MutableLiveData<String>()
+    val currentUser = MutableLiveData<Users>()
     val kayit = MutableLiveData<Boolean>()
-    val shoppingCarts = MutableLiveData<List<ShoppingCart>>()
+    val shoppingCarts = MutableLiveData<List<ShoppingCart>>(emptyList())
     val getProducById = MutableLiveData<Products>()
 
+
+    fun getShoppingCart() {
+        val job: Job = CoroutineScope(Dispatchers.IO).launch {
+            val item = dao.getShoppingCart()
+            if (item.isSuccessful && item.body()?.success == true) {
+                withContext(Dispatchers.Main) {
+                    shoppingCarts.value = item.body()?.data!!
+                }
+            }
+        }
+    }
 
     fun getProductById(
         product_id: Int,
@@ -61,11 +75,16 @@ class EcommerceRepository {
                 quantity = quantity
             )
             if (item.isSuccessful && item.body()?.success == true) {
-                withContext(Dispatchers.Main) {
-                    shoppingCarts.value = item.body()?.data!!
+                val newItem = item.body()?.data
+                if (newItem != null) {
+                    withContext(Dispatchers.Main) {
+                        shoppingCarts.value = shoppingCarts.value + newItem
+                    }
+                } else {
+                    Log.e("repo", "null geldi")
                 }
             } else {
-
+                Log.e("repo", "api basarisiz")
             }
         }
     }
@@ -106,6 +125,7 @@ class EcommerceRepository {
             if (user.isSuccessful && body?.data != null) {
                 withContext(Dispatchers.Main) {
                     currentUserRole.value = body.data.user_role
+                    currentUser.value = body.data!!
                 }
             } else {
                 withContext(Dispatchers.Main) {

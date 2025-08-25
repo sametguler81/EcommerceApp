@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.sametguler.myecommerceapp.model.Products
 import com.sametguler.myecommerceapp.model.ShoppingCart
 import com.sametguler.myecommerceapp.model.Users
+import com.sametguler.myecommerceapp.model.shoppingCartNew
 import com.sametguler.myecommerceapp.service.ApiUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,15 +21,18 @@ class EcommerceRepository {
     val currentUser = MutableLiveData<Users>()
     val kayit = MutableLiveData<Boolean>()
     val shoppingCarts = MutableLiveData<List<ShoppingCart>>(emptyList())
+    val shoppingCartsNew = MutableLiveData<List<shoppingCartNew>>(emptyList())
     val getProducById = MutableLiveData<Products>()
 
 
-    fun getShoppingCart() {
+    fun getShoppingCart(
+        user_id: Int
+    ) {
         val job: Job = CoroutineScope(Dispatchers.IO).launch {
-            val item = dao.getShoppingCart()
+            val item = dao.getShoppingCart(user_id = user_id)
             if (item.isSuccessful && item.body()?.success == true) {
                 withContext(Dispatchers.Main) {
-                    shoppingCarts.value = item.body()?.data!!
+                    shoppingCartsNew.value = item.body()?.data!!
                 }
             }
         }

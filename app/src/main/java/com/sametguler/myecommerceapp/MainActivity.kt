@@ -898,6 +898,19 @@ fun userHomePage(viewModel: EcommerceViewModel, navController: NavController) {
 
 @Composable
 fun userCartPage(viewModel: EcommerceViewModel) {
+    val shoppingCartNew = viewModel.shoppingCartNew.observeAsState().value
+    val currentUser = viewModel.currentUser.observeAsState().value!!.user_id
+    LaunchedEffect(Unit) {
+        viewModel.getShoppingCart(currentUser)
+    }
+
+    if (shoppingCartNew != null) {
+        LazyColumn {
+            items(shoppingCartNew.size) {
+                Text("${shoppingCartNew[it].product_name}")
+            }
+        }
+    }
 
 
 }

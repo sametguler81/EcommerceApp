@@ -54,6 +54,21 @@ data class Products(
     var product_stock: Int
 )
 
+data class shoppingCartNew(
+    @SerializedName("product_name")
+    @Expose
+    var product_name: String,
+    @SerializedName("product_price")
+    @Expose
+    var product_price: Double,
+    @SerializedName("product_image")
+    @Expose
+    var product_image: String,
+    @SerializedName("quantity")
+    @Expose
+    var quantity: Int,
+)
+
 data class ShoppingCart(
     @SerializedName("shopping_cart_id")
     @Expose

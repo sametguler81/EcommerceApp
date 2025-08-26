@@ -33,8 +33,13 @@ class EcommerceViewModel : ViewModel() {
     fun deleteShoppingCartItem(shopping_cart_id: Int) {
         viewModelScope.launch {
             repo.deleteShoppingCartItem(shopping_cart_id = shopping_cart_id)
+            // veritabanında sildikten sonra LiveData güncelle
+            shoppingCartNew.value = shoppingCartNew.value?.filter {
+                it.shopping_cart_id != shopping_cart_id
+            }
         }
     }
+
 
     fun addShoppingCart(user_id: Int, product_id: Int, quantity: Int) {
         viewModelScope.launch {

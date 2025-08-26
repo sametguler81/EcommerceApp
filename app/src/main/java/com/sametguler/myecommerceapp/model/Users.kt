@@ -55,6 +55,9 @@ data class Products(
 )
 
 data class shoppingCartNew(
+    @SerializedName("shopping_cart_id")
+    @Expose
+    var shopping_cart_id: Int,
     @SerializedName("product_name")
     @Expose
     var product_name: String,

@@ -33,6 +33,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
@@ -90,6 +91,10 @@ import androidx.navigation.navArgument
 import com.google.gson.Gson
 import com.sametguler.myecommerceapp.model.NavItem
 import com.sametguler.myecommerceapp.model.Products
+import com.sametguler.myecommerceapp.screen.AdminPage
+import com.sametguler.myecommerceapp.screen.DetailItemPage
+import com.sametguler.myecommerceapp.screen.LoginPage
+import com.sametguler.myecommerceapp.screen.RegisterPage
 import com.sametguler.myecommerceapp.ui.theme.MyEcommerceAppTheme
 import com.sametguler.myecommerceapp.viewmodel.EcommerceViewModel
 import kotlinx.coroutines.async
@@ -129,224 +134,6 @@ fun PageChanges() {
     }
 }
 
-@Composable
-fun LoginPage(navController: NavController, viewModel: EcommerceViewModel) {
-    val tfEmail = remember { mutableStateOf("") }
-    val tfPassword = remember { mutableStateOf("") }
-    val currentUserRole = viewModel.currentUserRole.observeAsState().value
-
-    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-        Box(modifier = Modifier.padding(innerPadding)) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(15.dp)
-            ) {
-                Image(
-                    painter = painterResource(R.drawable.shopping),
-                    contentDescription = "logo",
-                    modifier = Modifier.size(150.dp)
-                )
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    TextField(
-                        label = { Text("Email") },
-                        placeholder = { Text("Email girin") },
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = colorResource(R.color.tfColor),
-                            unfocusedContainerColor = colorResource(R.color.tfColor),
-                            focusedTextColor = Color.White,
-                            unfocusedTextColor = Color.LightGray,
-                        ),
-                        modifier = Modifier.padding(0.dp, 10.dp),
-                        value = tfEmail.value,
-                        onValueChange = {
-                            tfEmail.value = it
-                        })
-                    TextField(
-                        visualTransformation = PasswordVisualTransformation(),
-                        label = { Text("Şifre") },
-                        placeholder = { Text("Şifre girin") },
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = colorResource(R.color.tfColor),
-                            unfocusedContainerColor = colorResource(R.color.tfColor),
-                            focusedTextColor = Color.White,
-                            unfocusedTextColor = Color.LightGray,
-                        ),
-                        value = tfPassword.value,
-                        onValueChange = {
-                            tfPassword.value = it
-                        })
-
-                }
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    Button(onClick = {
-                        viewModel.kullaniciGiris(tfEmail.value, tfPassword.value)
-
-                    }) {
-                        Text("Giriş Yap")
-                    }
-                    Button(onClick = {
-                        navController.navigate("register")
-                    }) {
-                        Text("Hesabın yok mu?")
-                    }
-                }
-            }
-        }
-    }
-
-    LaunchedEffect(currentUserRole) {
-        when (currentUserRole) {
-            "admin" -> {
-                navController.navigate("admin") {
-                    popUpTo("login") { inclusive = true }
-                }
-            }
-
-            "user" -> {
-                navController.navigate("user") {
-                    popUpTo("login") { inclusive = true }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun RegisterPage(navController: NavController, viewModel: EcommerceViewModel) {
-    val tfName = remember { mutableStateOf("") }
-    val tfEmail = remember { mutableStateOf("") }
-    val tfPassword = remember { mutableStateOf("") }
-    val tfPhone = remember { mutableStateOf("") }
-    val kayit = viewModel.kayitDurum.observeAsState().value
-
-    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-        Box(modifier = Modifier.padding(innerPadding)) {
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(15.dp)
-            ) {
-                TextField(
-                    label = { Text("Name") },
-                    placeholder = { Text("Name girin") },
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = colorResource(R.color.tfColor),
-                        unfocusedContainerColor = colorResource(R.color.tfColor),
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.LightGray,
-                    ),
-                    modifier = Modifier.padding(0.dp, 10.dp),
-                    value = tfName.value,
-                    onValueChange = {
-                        tfName.value = it
-                    })
-                TextField(
-                    label = { Text("Email") },
-                    placeholder = { Text("Email girin") },
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = colorResource(R.color.tfColor),
-                        unfocusedContainerColor = colorResource(R.color.tfColor),
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.LightGray,
-                    ),
-                    modifier = Modifier.padding(0.dp, 10.dp),
-                    value = tfEmail.value,
-                    onValueChange = {
-                        tfEmail.value = it
-                    })
-                TextField(
-                    label = { Text("Password") },
-                    placeholder = { Text("Password girin") },
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = colorResource(R.color.tfColor),
-                        unfocusedContainerColor = colorResource(R.color.tfColor),
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.LightGray,
-                    ),
-                    visualTransformation = PasswordVisualTransformation(),
-                    modifier = Modifier.padding(0.dp, 10.dp),
-                    value = tfPassword.value,
-                    onValueChange = {
-                        tfPassword.value = it
-                    })
-                TextField(
-                    label = { Text("Phone") },
-                    placeholder = { Text("Phone girin") },
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = colorResource(R.color.tfColor),
-                        unfocusedContainerColor = colorResource(R.color.tfColor),
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.LightGray,
-                    ),
-                    modifier = Modifier.padding(0.dp, 10.dp),
-                    value = tfPhone.value,
-                    onValueChange = {
-                        tfPhone.value = it
-                    })
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    Button(onClick = {
-                        viewModel.kullaniciKayit(
-                            name = tfName.value,
-                            email = tfEmail.value,
-                            password = tfPassword.value,
-                            phone = tfPhone.value
-                        )
-
-                    }) {
-                        Text("Kayıt ol")
-                    }
-                    Button(onClick = {
-                        navController.navigate("login")
-                    }) {
-                        Text("Hesabın var mı?")
-                    }
-                }
-            }
-        }
-    }
-    LaunchedEffect(kayit) {
-        when (kayit) {
-            true -> {
-                navController.navigate("login") {
-                    popUpTo("login") { inclusive = false }
-                }
-            }
-
-            false -> {
-
-            }
-
-            else -> {
-
-            }
-        }
-    }
-}
-
-@Composable
-fun AdminPage() {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("Admin Page")
-    }
-}
 
 @Composable
 fun UserPageChanges(viewModel: EcommerceViewModel) {
@@ -369,265 +156,6 @@ fun UserPageChanges(viewModel: EcommerceViewModel) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun DetailItemPage(
-    navController: NavController,
-    products: Products,
-    viewModel: EcommerceViewModel
-) {
-    val context = LocalContext.current
-    val scrollState = rememberScrollState()
-    Scaffold(
-        containerColor = Color.LightGray,
-        topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = colorResource(R.color.tfColor),
-                    titleContentColor = Color.White,
-                ),
-                actions = {
-                    IconButton(onClick = {
-
-                    }, modifier = Modifier.padding(end = 5.dp)) {
-                        Box(
-                            modifier = Modifier
-                                .size(75.dp)
-                                .clip(
-                                    CircleShape
-                                )
-                                .background(color = Color.White),
-                        ) {
-                            Icon(
-                                modifier = Modifier
-                                    .size(25.dp)
-                                    .align(alignment = Alignment.Center),
-                                imageVector = Icons.Default.Share,
-                                tint = Color.Black,
-                                contentDescription = "share"
-                            )
-                        }
-                    }
-                },
-                title = {
-                    IconButton(onClick = {
-                        navController.navigate("userHome") {
-                            popUpTo(route = "userHome") {
-                                inclusive = true
-                            }
-                        }
-                    }, modifier = Modifier.padding(end = 5.dp)) {
-                        Box(
-                            modifier = Modifier
-                                .size(75.dp)
-                                .clip(
-                                    CircleShape
-                                )
-                                .background(color = Color.White),
-                        ) {
-                            Icon(
-                                modifier = Modifier
-                                    .size(25.dp)
-                                    .align(alignment = Alignment.Center),
-                                imageVector = Icons.Default.KeyboardArrowLeft,
-                                tint = Color.Black,
-                                contentDescription = "back"
-                            )
-                        }
-                    }
-                })
-        },
-        modifier = Modifier.fillMaxSize()
-    ) { innerPadding ->
-        Box(modifier = Modifier.padding(innerPadding)) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(scrollState)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(color = Color.LightGray)
-                        .weight(0.5F)
-                ) {
-                    val resId = context.resources.getIdentifier(
-                        products.product_image,
-                        "drawable",
-                        context.packageName
-                    )
-                    if (resId != 0) {
-                        Image(
-                            modifier = Modifier.align(Alignment.Center),
-                            painter = painterResource(id = resId),
-                            contentDescription = "itemImage"
-                        )
-                    }
-                }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(0.5F)
-                ) {
-                    Card(
-                        colors = CardDefaults.cardColors(
-                            containerColor = colorResource(R.color.tfColor)
-                        ),
-                        shape = RoundedCornerShape(
-                            topEnd = 32.dp,
-                            topStart = 32.dp,
-                            bottomEnd = 0.dp,
-                            bottomStart = 0.dp
-                        ),
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(color = Color.LightGray)
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(25.dp)
-                        ) {
-                            Text(
-                                "${products.product_name}",
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 24.sp,
-                            )
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(0.dp, 5.dp)
-                            ) {
-                                Card(
-                                    colors = CardDefaults.cardColors(
-                                        containerColor = Color.White,
-                                    ),
-                                    modifier = Modifier
-                                        .weight(0.4F)
-                                        .padding(4.dp)
-                                ) {
-                                    Row(modifier = Modifier.padding(5.dp)) {
-                                        Icon(
-                                            modifier = Modifier.padding(end = 2.dp),
-                                            imageVector = Icons.Default.Star,
-                                            tint = Color.Green,
-                                            contentDescription = "star"
-                                        )
-                                        Text(
-                                            "4.5",
-                                            color = Color.Black,
-                                            modifier = Modifier.padding(end = 2.dp),
-                                        )
-                                        Text("115 gösterim", color = Color.LightGray)
-                                    }
-                                }
-                                Card(
-                                    colors = CardDefaults.cardColors(
-                                        containerColor = Color.White,
-                                    ), modifier = Modifier.padding(4.dp)
-                                ) {
-                                    Row(modifier = Modifier.padding(5.dp)) {
-                                        Icon(
-                                            modifier = Modifier.padding(end = 2.dp),
-                                            imageVector = Icons.Default.ThumbUp,
-                                            tint = Color.Red,
-                                            contentDescription = "star"
-                                        )
-                                        Text("93%", color = Color.Black)
-                                    }
-                                }
-                                Card(
-                                    colors = CardDefaults.cardColors(
-                                        containerColor = Color.White,
-                                    ), modifier = Modifier.padding(4.dp)
-                                ) {
-                                    Row(modifier = Modifier.padding(5.dp)) {
-                                        Icon(
-                                            modifier = Modifier.padding(end = 5.dp),
-                                            imageVector = Icons.Default.Info,
-                                            tint = Color.LightGray,
-                                            contentDescription = "comment"
-                                        )
-                                        Text("142", color = Color.Black)
-                                    }
-                                }
-                            }
-                            Card(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 4.dp, vertical = 5.dp),
-                                colors = CardDefaults.cardColors(
-                                    containerColor = Color.LightGray
-                                )
-                            ) {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(5.dp),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically,
-                                ) {
-                                    Row {
-                                        Text(
-                                            "${products.product_price} ₺",
-                                            color = Color.Black,
-                                            fontSize = 20.sp,
-                                            modifier = Modifier.padding(end = 7.dp)
-                                        )
-                                        Text(
-                                            text = "Peşin fiyatına 6 taksit",
-                                            color = Color.DarkGray,
-                                            fontSize = 14.sp
-                                        )
-                                    }
-                                    IconButton(onClick = {}) {
-                                        Icon(
-                                            imageVector = Icons.Default.Info,
-                                            tint = Color.DarkGray,
-                                            contentDescription = "info"
-                                        )
-                                    }
-                                }
-                            }
-                            Text(
-                                modifier = Modifier.padding(vertical = 5.dp),
-                                text = "${products.product_desc}",
-                                color = Color.DarkGray,
-                                fontSize = 17.sp,
-                            )
-                            Button(
-                                shape = RoundedCornerShape(7.dp),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color.White,
-                                    contentColor = Color.Black,
-                                ),
-                                onClick = {
-                                    val currentUserId = viewModel.currentUser.value.user_id
-                                    viewModel.addShoppingCart(
-                                        user_id = currentUserId,
-                                        product_id = products.product_id,
-                                        quantity = 1
-                                    )
-                                    navController.navigate("userHome") {
-                                        popUpTo(route = "userHome") {
-                                            inclusive = true
-                                        }
-                                    }
-                                },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = 15.dp)
-                            ) {
-                                Text("Sepete ekle", color = Color.Black, fontSize = 22.sp)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -900,6 +428,7 @@ fun userHomePage(viewModel: EcommerceViewModel, navController: NavController) {
 fun userCartPage(viewModel: EcommerceViewModel) {
     val shoppingCartNew = viewModel.shoppingCartNew.observeAsState().value
     val currentUser = viewModel.currentUser.observeAsState().value!!.user_id
+    val context = LocalContext.current
     LaunchedEffect(Unit) {
         viewModel.getShoppingCart(currentUser)
     }
@@ -907,7 +436,46 @@ fun userCartPage(viewModel: EcommerceViewModel) {
     if (shoppingCartNew != null) {
         LazyColumn {
             items(shoppingCartNew.size) {
-                Text("${shoppingCartNew[it].product_name}")
+                val resId = context.resources.getIdentifier(
+                    shoppingCartNew[it].product_image,
+                    "drawable",
+                    context.packageName
+                )
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(5.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row {
+                            Image(
+                                painter = painterResource(id = resId),
+                                contentDescription = "itemImage",
+                                modifier = Modifier.size(75.dp)
+                            )
+                            Column {
+                                Text("${shoppingCartNew[it].product_name}")
+                                Text("${shoppingCartNew[it].product_price} ₺")
+                            }
+                        }
+                        Column {
+                            IconButton(onClick = {
+                                viewModel.deleteShoppingCartItem(shopping_cart_id = shoppingCartNew[it].shopping_cart_id)
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Default.Delete,
+                                    contentDescription = "delete"
+                                )
+                            }
+                        }
+                    }
+                }
             }
         }
     }

@@ -62,6 +62,9 @@ class EcommerceRepository {
                     shoppingCarts.value = shoppingCarts.value.filter {
                         it.shopping_cart_id != shopping_cart_id
                     }
+                    shoppingCartsNew.value = shoppingCartsNew.value.filter {
+                        it.shopping_cart_id != shopping_cart_id
+                    }
                 }
             }
         }

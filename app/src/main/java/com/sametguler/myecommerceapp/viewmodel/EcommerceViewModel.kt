@@ -15,7 +15,20 @@ class EcommerceViewModel : ViewModel() {
     val shoppingCartItems = repo.shoppingCarts
     val shoppingCartNew = repo.shoppingCartsNew
     val getProductById = repo.getProducById
+    val getOrdes = repo.getOrders
+    val orderStatus = repo.orderStatus
 
+    fun addOrders(user_id: Int, product_id: Int, quantity: Int, total_price: Double) {
+        viewModelScope.launch {
+            repo.addOrders(user_id, product_id, quantity, total_price)
+        }
+    }
+
+    fun getOrders() {
+        viewModelScope.launch {
+            repo.getOrders()
+        }
+    }
 
     fun getShoppingCart(user_id: Int) {
         viewModelScope.launch {

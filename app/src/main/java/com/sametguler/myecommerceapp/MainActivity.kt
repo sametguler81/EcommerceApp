@@ -84,6 +84,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavHost
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -129,7 +130,7 @@ fun PageChanges() {
             RegisterPage(navController, viewModel)
         }
         composable(route = "admin") {
-            AdminPage()
+            AdminPageChanges(viewModel)
         }
         composable(route = "user") {
             UserPageChanges(viewModel)
@@ -158,6 +159,16 @@ fun UserPageChanges(viewModel: EcommerceViewModel) {
             val json = it.arguments?.getString("item")
             val itemG = Gson().fromJson(json, Products::class.java)
             DetailItemPage(navController, itemG, viewModel)
+        }
+    }
+}
+
+@Composable
+fun AdminPageChanges(viewModel: EcommerceViewModel) {
+    val navController = rememberNavController()
+    NavHost(navController, startDestination = "AdminHome") {
+        composable(route = "AdminHome") {
+            AdminPage(viewModel)
         }
     }
 }
@@ -447,7 +458,7 @@ fun userProfilePage() {
 fun ContentScreen(index: Int, viewModel: EcommerceViewModel, navController: NavController) {
     when (index) {
         0 -> userHomePage(viewModel, navController)
-        1 -> userCartPage(viewModel)
+        1 -> userCartPage(viewModel,navController)
         2 -> userProfilePage()
     }
 }

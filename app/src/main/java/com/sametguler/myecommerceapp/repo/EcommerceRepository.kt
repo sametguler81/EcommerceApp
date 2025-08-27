@@ -2,6 +2,7 @@ package com.sametguler.myecommerceapp.repo
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import com.sametguler.myecommerceapp.model.Orders
 import com.sametguler.myecommerceapp.model.Products
 import com.sametguler.myecommerceapp.model.ShoppingCart
 import com.sametguler.myecommerceapp.model.Users
@@ -12,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import retrofit2.Response
 
 class EcommerceRepository {
 
@@ -23,7 +25,50 @@ class EcommerceRepository {
     val shoppingCarts = MutableLiveData<List<ShoppingCart>>(emptyList())
     val shoppingCartsNew = MutableLiveData<List<shoppingCartNew>>(emptyList())
     val getProducById = MutableLiveData<Products>()
+    val getOrders = MutableLiveData<List<Orders>>()
+    val orderStatus = MutableLiveData<Boolean>(false)
 
+    fun addOrders(
+        user_id: Int,
+        product_id: Int,
+        quantity: Int,
+        total_price: Double
+    ) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = dao.createOrder(user_id, product_id, quantity, total_price)
+                val newOrder = response.body()?.data
+                if (response.isSuccessful && response.body()?.success == true && newOrder != null) {
+                    withContext(Dispatchers.Main) {
+                        val currentOrders = getOrders.value ?: emptyList()
+                        getOrders.value = currentOrders + newOrder
+                        orderStatus.value = true
+                        shoppingCartsNew.value = emptyList()
+                    }
+                } else {
+                    withContext(Dispatchers.Main) {
+                        orderStatus.value = false
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    orderStatus.value = false
+                }
+            }
+        }
+    }
+
+
+    fun getOrders() {
+        val job: Job = CoroutineScope(Dispatchers.IO).launch {
+            val item = dao.getOrders()
+            if (item.isSuccessful && item.body()?.success == true) {
+                withContext(Dispatchers.Main) {
+                    getOrders.value = item.body()?.data!!
+                }
+            }
+        }
+    }
 
     fun getShoppingCart(
         user_id: Int

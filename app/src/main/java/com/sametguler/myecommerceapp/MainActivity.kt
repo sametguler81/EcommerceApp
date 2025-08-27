@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -95,6 +96,8 @@ import com.sametguler.myecommerceapp.screen.AdminPage
 import com.sametguler.myecommerceapp.screen.DetailItemPage
 import com.sametguler.myecommerceapp.screen.LoginPage
 import com.sametguler.myecommerceapp.screen.RegisterPage
+import com.sametguler.myecommerceapp.screen.topBarScreen
+import com.sametguler.myecommerceapp.screen.userCartPage
 import com.sametguler.myecommerceapp.ui.theme.MyEcommerceAppTheme
 import com.sametguler.myecommerceapp.viewmodel.EcommerceViewModel
 import kotlinx.coroutines.async
@@ -142,6 +145,9 @@ fun UserPageChanges(viewModel: EcommerceViewModel) {
         composable(route = "userHome") {
             UserHome(viewModel, navController)
         }
+        composable(route = "topBarCartPage") {
+            topBarScreen(navController, viewModel)
+        }
         composable(
             route = "detailItem/{item}", arguments = listOf(
                 navArgument("item", {
@@ -178,6 +184,7 @@ fun UserHome(viewModel: EcommerceViewModel, navController: NavController) {
                 title = { Text("Bilgisayarcım", color = Color.White) },
                 actions = {
                     IconButton(onClick = {
+                        navController.navigate("topBarCartPage")
                     }) {
                         Icon(
                             painter = painterResource(R.drawable.sepet),
@@ -424,64 +431,6 @@ fun userHomePage(viewModel: EcommerceViewModel, navController: NavController) {
 
 }
 
-@Composable
-fun userCartPage(viewModel: EcommerceViewModel) {
-    val shoppingCartNew = viewModel.shoppingCartNew.observeAsState().value
-    val currentUser = viewModel.currentUser.observeAsState().value!!.user_id
-    val context = LocalContext.current
-    LaunchedEffect(Unit) {
-        viewModel.getShoppingCart(currentUser)
-    }
-
-    if (shoppingCartNew != null) {
-        LazyColumn {
-            items(shoppingCartNew.size) {
-                val resId = context.resources.getIdentifier(
-                    shoppingCartNew[it].product_image,
-                    "drawable",
-                    context.packageName
-                )
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp)
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(5.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Row {
-                            Image(
-                                painter = painterResource(id = resId),
-                                contentDescription = "itemImage",
-                                modifier = Modifier.size(75.dp)
-                            )
-                            Column {
-                                Text("${shoppingCartNew[it].product_name}")
-                                Text("${shoppingCartNew[it].product_price} ₺")
-                            }
-                        }
-                        Column {
-                            IconButton(onClick = {
-                                viewModel.deleteShoppingCartItem(shopping_cart_id = shoppingCartNew[it].shopping_cart_id)
-                            }) {
-                                Icon(
-                                    imageVector = Icons.Default.Delete,
-                                    contentDescription = "delete"
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-
-}
 
 @Composable
 fun userProfilePage() {

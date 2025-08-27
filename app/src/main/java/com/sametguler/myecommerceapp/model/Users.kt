@@ -5,11 +5,54 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import java.sql.Timestamp
+import java.time.LocalDateTime
 
 data class ApiResponse<T>(
     val success: Boolean,
     val message: String? = null,
     val data: T? = null
+)
+
+data class OrdersNew(
+    @SerializedName("order_id")
+    @Expose
+    var order_id: Int,
+    @SerializedName("total_price")
+    @Expose
+    var total_price: Double,
+    @SerializedName("quantity")
+    @Expose
+    var quantity: Int,
+    @SerializedName("user_id")
+    @Expose
+    var user_id: Int,
+    @SerializedName("user_name")
+    @Expose
+    var user_name: String,
+    @SerializedName("user_email")
+    @Expose
+    var user_email: String,
+    @SerializedName("user_phone")
+    @Expose
+    var user_phone: String,
+    @SerializedName("product_id")
+    @Expose
+    var product_id: Int,
+    @SerializedName("product_name")
+    @Expose
+    var product_name: String,
+    @SerializedName("product_image")
+    @Expose
+    var product_image: String,
+    @SerializedName("product_stock")
+    @Expose
+    var product_stock: Int,
+    @SerializedName("order_status")
+    @Expose
+    var order_status: String,
+    @SerializedName("created_at")
+    @Expose
+    var created_at: String,
 )
 
 data class Users(

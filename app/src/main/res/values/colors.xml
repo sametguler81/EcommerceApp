@@ -9,5 +9,8 @@
     <color name="white">#FFFFFFFF</color>
     <color name="tfColor">#2B68AE</color>
     <color name="tfBg">#F2F4F7</color>
+    <color name="cardMusteri">#7FB77E</color>
+    <color name="durumGuncelleme">#00E2FF</color>
+
 
 </resources>

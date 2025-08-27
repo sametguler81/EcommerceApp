@@ -3,6 +3,7 @@ package com.sametguler.myecommerceapp.repo
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.sametguler.myecommerceapp.model.Orders
+import com.sametguler.myecommerceapp.model.OrdersNew
 import com.sametguler.myecommerceapp.model.Products
 import com.sametguler.myecommerceapp.model.ShoppingCart
 import com.sametguler.myecommerceapp.model.Users
@@ -27,6 +28,25 @@ class EcommerceRepository {
     val getProducById = MutableLiveData<Products>()
     val getOrders = MutableLiveData<List<Orders>>()
     val orderStatus = MutableLiveData<Boolean>(false)
+    val ordersNew = MutableLiveData<List<OrdersNew>>(emptyList())
+
+
+    fun updateOrderStatus(order_id: Int, order_status: String) {
+        val job: Job = CoroutineScope(Dispatchers.IO).launch {
+            val item = dao.updateOrderStatus(order_id = order_id, order_status = order_status)
+        }
+    }
+
+    fun getOrdersNew() {
+        val job: Job = CoroutineScope(Dispatchers.IO).launch {
+            val item = dao.getOrdersNew()
+            if (item.isSuccessful && item.body()?.data != null) {
+                withContext(Dispatchers.Main) {
+                    ordersNew.value = item.body()?.data!!
+                }
+            }
+        }
+    }
 
     fun addOrders(
         user_id: Int,

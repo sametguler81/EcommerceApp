@@ -92,10 +92,12 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.gson.Gson
 import com.sametguler.myecommerceapp.model.NavItem
+import com.sametguler.myecommerceapp.model.OrdersNew
 import com.sametguler.myecommerceapp.model.Products
 import com.sametguler.myecommerceapp.screen.AdminPage
 import com.sametguler.myecommerceapp.screen.DetailItemPage
 import com.sametguler.myecommerceapp.screen.LoginPage
+import com.sametguler.myecommerceapp.screen.OrderDetail
 import com.sametguler.myecommerceapp.screen.RegisterPage
 import com.sametguler.myecommerceapp.screen.topBarScreen
 import com.sametguler.myecommerceapp.screen.userCartPage
@@ -168,7 +170,18 @@ fun AdminPageChanges(viewModel: EcommerceViewModel) {
     val navController = rememberNavController()
     NavHost(navController, startDestination = "AdminHome") {
         composable(route = "AdminHome") {
-            AdminPage(viewModel)
+            AdminPage(viewModel, navController)
+        }
+        composable(
+            route = "OrderDetail/{orders}", arguments = listOf(
+                navArgument("orders", {
+                    type = NavType.StringType
+                })
+            )
+        ) {
+            val orderJson = it.arguments?.getString("orders")
+            val order = Gson().fromJson(orderJson, OrdersNew::class.java)
+            OrderDetail(navController, viewModel = viewModel, order = order)
         }
     }
 }
@@ -458,7 +471,7 @@ fun userProfilePage() {
 fun ContentScreen(index: Int, viewModel: EcommerceViewModel, navController: NavController) {
     when (index) {
         0 -> userHomePage(viewModel, navController)
-        1 -> userCartPage(viewModel,navController)
+        1 -> userCartPage(viewModel, navController)
         2 -> userProfilePage()
     }
 }

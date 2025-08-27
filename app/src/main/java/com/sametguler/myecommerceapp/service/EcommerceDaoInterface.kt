@@ -25,15 +25,18 @@ interface EcommerceDaoInterface {
         @Field("user_password") password: String
     ): Response<ApiResponse<Users>>
 
-   @FormUrlEncoded
-   @POST("get_shopping_cart.php")
-   suspend fun getShoppingCart(
-    @Field("user_id") user_id:Int
-   ): Response<ApiResponse<List<shoppingCartNew>>>
+    @FormUrlEncoded
+    @POST("get_shopping_cart.php")
+    suspend fun getShoppingCart(
+        @Field("user_id") user_id: Int
+    ): Response<ApiResponse<List<shoppingCartNew>>>
 
     // Ürünleri Getir
     @GET("get_products.php")
     suspend fun getProducts(): Response<ApiResponse<List<Products>>>
+
+    @GET("get_orders_new.php")
+    suspend fun getOrdersNew(): Response<ApiResponse<List<OrdersNew>>>
 
     // Ürün Güncelle
     @FormUrlEncoded

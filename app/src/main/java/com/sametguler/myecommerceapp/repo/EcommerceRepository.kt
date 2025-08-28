@@ -31,6 +31,24 @@ class EcommerceRepository {
     val ordersNew = MutableLiveData<List<OrdersNew>>(emptyList())
 
 
+    fun addProduct(
+        product_name: String,
+        product_desc: String,
+        product_image: String,
+        product_price: Double,
+        product_stock: Int
+    ) {
+        val job: Job = CoroutineScope(Dispatchers.IO).launch {
+            val item = dao.addProduct(
+                product_name,
+                product_desc,
+                product_image,
+                product_price,
+                product_stock
+            )
+        }
+    }
+
     fun updateOrderStatus(order_id: Int, order_status: String) {
         val job: Job = CoroutineScope(Dispatchers.IO).launch {
             val item = dao.updateOrderStatus(order_id = order_id, order_status = order_status)

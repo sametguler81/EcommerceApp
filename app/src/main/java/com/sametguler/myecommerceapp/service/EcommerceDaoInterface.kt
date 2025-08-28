@@ -17,6 +17,16 @@ interface EcommerceDaoInterface {
         @Field("user_phone") phone: String
     ): Response<ApiResponse<Users>>
 
+    @FormUrlEncoded
+    @POST("create_Product.php")
+    suspend fun addProduct(
+        @Field("product_name") product_name: String,
+        @Field("product_desc") product_desc: String,
+        @Field("product_image") product_image: String,
+        @Field("product_price") product_price: Double,
+        @Field("product_stock") product_stock: Int,
+    ): Response<ApiResponse<Products>>
+
     // Giriş
     @FormUrlEncoded
     @POST("login.php")

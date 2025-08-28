@@ -149,65 +149,101 @@ fun topBarScreen(navController: NavController, viewModel: EcommerceViewModel) {
     val shoppingCartNew = viewModel.shoppingCartNew.observeAsState().value
     val currentUser = viewModel.currentUser.observeAsState().value!!.user_id
     val context = LocalContext.current
+    val orderStatus by viewModel.orderStatus.observeAsState()
+
     LaunchedEffect(Unit) {
         viewModel.getShoppingCart(currentUser)
     }
 
     if (shoppingCartNew != null) {
-        LazyColumn {
-            items(shoppingCartNew.size) {
-                val resId = context.resources.getIdentifier(
-                    shoppingCartNew[it].product_image,
-                    "drawable",
-                    context.packageName
-                )
-                Card(
-                    colors = CardDefaults.cardColors(
-                        containerColor = colorResource(id = R.color.tfColor),
-                        contentColor = Color.White,
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp)
-                ) {
-                    Row(
+        Box(modifier = Modifier.fillMaxSize()) {
+            LazyColumn {
+                items(shoppingCartNew.size) {
+                    val resId = context.resources.getIdentifier(
+                        shoppingCartNew[it].product_image,
+                        "drawable",
+                        context.packageName
+                    )
+                    Card(
+                        colors = CardDefaults.cardColors(
+                            containerColor = colorResource(id = R.color.tfColor),
+                            contentColor = Color.White,
+                        ),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(5.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                            .padding(10.dp)
                     ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Image(
-                                painter = painterResource(id = resId),
-                                contentDescription = "itemImage",
-                                modifier = Modifier.size(75.dp)
-                            )
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxHeight()
-                                    .padding(start = 5.dp),
-                                verticalArrangement = Arrangement.SpaceEvenly
-                            ) {
-                                Text("${shoppingCartNew[it].product_name}", color = Color.White)
-                                Text("${shoppingCartNew[it].product_price} ₺", color = Color.White)
-                            }
-                        }
-                        Column {
-                            IconButton(onClick = {
-                                viewModel.deleteShoppingCartItem(shopping_cart_id = shoppingCartNew[it].shopping_cart_id)
-                            }) {
-                                Icon(
-                                    tint = Color.White,
-                                    imageVector = Icons.Default.Delete,
-                                    contentDescription = "delete"
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(5.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Image(
+                                    painter = painterResource(id = resId),
+                                    contentDescription = "itemImage",
+                                    modifier = Modifier.size(75.dp)
                                 )
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxHeight()
+                                        .padding(start = 5.dp),
+                                    verticalArrangement = Arrangement.SpaceEvenly
+                                ) {
+                                    Text("${shoppingCartNew[it].product_name}", color = Color.White)
+                                    Text(
+                                        "${shoppingCartNew[it].product_price} ₺",
+                                        color = Color.White
+                                    )
+                                }
+                            }
+                            Column {
+                                IconButton(onClick = {
+                                    viewModel.deleteShoppingCartItem(shopping_cart_id = shoppingCartNew[it].shopping_cart_id)
+                                }) {
+                                    Icon(
+                                        tint = Color.White,
+                                        imageVector = Icons.Default.Delete,
+                                        contentDescription = "delete"
+                                    )
+                                }
                             }
                         }
                     }
                 }
             }
+            Button(modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp)
+                .align(alignment = Alignment.BottomCenter), onClick = {
+                shoppingCartNew.forEachIndexed { index, shoppingCartNew ->
+                    viewModel.addOrders(
+                        user_id = shoppingCartNew.user_id,
+                        product_id = shoppingCartNew.product_id,
+                        quantity = shoppingCartNew.quantity,
+                        total_price = shoppingCartNew.product_price
+                    )
+                    viewModel.deleteShoppingCartItem(shopping_cart_id = shoppingCartNew.shopping_cart_id)
+                }
+            }) {
+                Text("Sipariş Oluştur")
+            }
+            LaunchedEffect(orderStatus) {
+                if (orderStatus == true) {
+                    Toast.makeText(context, "Sipariş oluşturuldu!", Toast.LENGTH_SHORT)
+                        .show()
+                    viewModel.orderStatus.value = false // Reset
+                    navController.navigate("userHome") {
+                        popUpTo(route = "userHome") {
+                            inclusive = true
+                        }
+                    }
+                }
+            }
         }
+
     }
 
 

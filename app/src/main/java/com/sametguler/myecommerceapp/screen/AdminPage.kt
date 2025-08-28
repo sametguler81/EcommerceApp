@@ -37,6 +37,8 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -166,6 +168,15 @@ fun OrderPage(
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(orders.size) {
                     Card(
+                        colors = CardDefaults.cardColors(
+                            containerColor = when (orders[it].order_status) {
+                                "pending" -> colorResource(R.color.tfColor)
+                                "processing" -> Color.Yellow
+                                "shipping" -> Color.Gray
+                                "delivered" -> Color.Green
+                                else -> Color.Gray
+                            }
+                        ),
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(10.dp)
@@ -465,14 +476,84 @@ fun OrderDetail(navController: NavController, order: OrdersNew, viewModel: Ecomm
 
 
 @Composable
-fun WalletPage() {
+fun AddPage() {
+    var tfName by remember { mutableStateOf("") }
+    var tfDesc by remember { mutableStateOf("") }
+
     Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text("WalletPage")
+        Column(modifier = Modifier.fillMaxSize()) {
+            Card(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(15.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.DarkGray)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(10.dp)
+                ) {
+                    Row {
+                        Card(
+                            modifier = Modifier.weight(0.5f),
+                            colors = CardDefaults.cardColors(
+                                contentColor = Color.White,
+                                containerColor = Color.Red
+                            )
+                        ) {
+                            Column(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text("Ürün İsmi")
+                                TextField(
+                                    colors = TextFieldDefaults.colors(
+                                        focusedContainerColor = Color.Transparent,
+                                        focusedIndicatorColor = colorResource(R.color.tfColor),
+                                        focusedLabelColor = Color.Black,
+                                        focusedTextColor = Color.Black,
+                                        unfocusedTextColor = Color.Black,
+                                        unfocusedLabelColor = Color.Black
+                                    ),
+                                    modifier = Modifier.padding(
+                                        horizontal = 15.dp,
+                                        vertical = 5.dp
+                                    ), value = tfName, onValueChange = { tfName = it })
+                            }
+                        }
+                        Card(
+                            modifier = Modifier.weight(0.5f),
+                            colors = CardDefaults.cardColors(
+                                contentColor = Color.White,
+                                containerColor = Color.Blue
+                            )
+                        ) {
+                            Column(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text("Ürün Detay")
+                                TextField(
+                                    colors = TextFieldDefaults.colors(
+                                        focusedContainerColor = Color.Transparent,
+                                        focusedIndicatorColor = colorResource(R.color.tfColor),
+                                        focusedLabelColor = Color.Black,
+                                        focusedTextColor = Color.Black,
+                                        unfocusedTextColor = Color.Black,
+                                        unfocusedLabelColor = Color.Black
+                                    ),
+                                    modifier = Modifier.padding(
+                                        horizontal = 15.dp,
+                                        vertical = 5.dp
+                                    ),
+                                    value = tfDesc, onValueChange = { tfDesc = it },
+                                )
+                            }
+                        }
+
+                    }
+                }
+            }
         }
     }
 }
@@ -506,7 +587,7 @@ fun AdminContentScreen(
             navController = navController
         )
 
-        1 -> WalletPage()
+        1 -> AddPage()
         2 -> AdminUserPage()
     }
 }

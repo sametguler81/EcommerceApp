@@ -2,6 +2,7 @@ package com.sametguler.myecommerceapp.screen
 
 import android.graphics.Paint.Align
 import android.graphics.drawable.Icon
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -19,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.ShoppingCart
@@ -82,7 +84,7 @@ fun AdminPage(viewModel: EcommerceViewModel, navController: NavController) {
 
     val navbItemList = listOf(
         NavItem(label = "Siparişler", icon = Icons.Default.ShoppingCart),
-        NavItem(label = "Bakiye", icon = Icons.Default.Star),
+        NavItem(label = "Ürünler", icon = Icons.Default.Home),
         NavItem(label = "Hesap", icon = Icons.Default.AccountCircle)
     )
 
@@ -131,10 +133,11 @@ fun AdminPage(viewModel: EcommerceViewModel, navController: NavController) {
             ) {
             currentUser?.let { user ->
                 AdminContentScreen(
+                    viewModel,
                     selectedIndex.value,
                     orders = orders,
                     currentUsers = currentUser,
-                    navController = navController
+                    navController = navController,
                 )
             } ?: Box(modifier = Modifier.fillMaxSize()) {
                 Text("Yükleniyor...")
@@ -476,84 +479,221 @@ fun OrderDetail(navController: NavController, order: OrdersNew, viewModel: Ecomm
 
 
 @Composable
-fun AddPage() {
+fun AddPage(viewModel: EcommerceViewModel) {
     var tfName by remember { mutableStateOf("") }
     var tfDesc by remember { mutableStateOf("") }
+    var tfResim by remember { mutableStateOf("") }
+    var tfPrice by remember { mutableStateOf("") }
+    var tfStock by remember { mutableStateOf("") }
+    val context = LocalContext.current
+
 
     Box(modifier = Modifier.fillMaxSize()) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            Card(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(15.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.DarkGray)
-            ) {
-                Column(
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(10.dp)
+        ) {
+            Row {
+                Card(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(10.dp)
+                        .weight(0.5f)
+                        .padding(end = 5.dp),
+                    colors = CardDefaults.cardColors(
+                        contentColor = Color.White,
+                        containerColor = colorResource(R.color.yumusakYesil)
+                    )
                 ) {
-                    Row {
-                        Card(
-                            modifier = Modifier.weight(0.5f),
-                            colors = CardDefaults.cardColors(
-                                contentColor = Color.White,
-                                containerColor = Color.Red
-                            )
-                        ) {
-                            Column(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Text("Ürün İsmi")
-                                TextField(
-                                    colors = TextFieldDefaults.colors(
-                                        focusedContainerColor = Color.Transparent,
-                                        focusedIndicatorColor = colorResource(R.color.tfColor),
-                                        focusedLabelColor = Color.Black,
-                                        focusedTextColor = Color.Black,
-                                        unfocusedTextColor = Color.Black,
-                                        unfocusedLabelColor = Color.Black
-                                    ),
-                                    modifier = Modifier.padding(
-                                        horizontal = 15.dp,
-                                        vertical = 5.dp
-                                    ), value = tfName, onValueChange = { tfName = it })
-                            }
-                        }
-                        Card(
-                            modifier = Modifier.weight(0.5f),
-                            colors = CardDefaults.cardColors(
-                                contentColor = Color.White,
-                                containerColor = Color.Blue
-                            )
-                        ) {
-                            Column(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Text("Ürün Detay")
-                                TextField(
-                                    colors = TextFieldDefaults.colors(
-                                        focusedContainerColor = Color.Transparent,
-                                        focusedIndicatorColor = colorResource(R.color.tfColor),
-                                        focusedLabelColor = Color.Black,
-                                        focusedTextColor = Color.Black,
-                                        unfocusedTextColor = Color.Black,
-                                        unfocusedLabelColor = Color.Black
-                                    ),
-                                    modifier = Modifier.padding(
-                                        horizontal = 15.dp,
-                                        vertical = 5.dp
-                                    ),
-                                    value = tfDesc, onValueChange = { tfDesc = it },
-                                )
-                            }
-                        }
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text("Ürün İsmi")
+                        TextField(
+                            singleLine = true,          // Tek satır
+                            maxLines = 1,
+                            placeholder = { Text("Ürün İsmi") },
+                            colors = TextFieldDefaults.colors(
+                                disabledContainerColor = Color.Transparent,
+                                focusedContainerColor = Color.Transparent,
+                                focusedIndicatorColor = colorResource(R.color.tfColor),
+                                focusedLabelColor = Color.Black,
+                                focusedTextColor = Color.Black,
+                                unfocusedTextColor = Color.Black,
+                                unfocusedLabelColor = Color.Black,
+                                unfocusedContainerColor = Color.Transparent
+                            ),
+                            modifier = Modifier.padding(
+                                horizontal = 15.dp,
+                                vertical = 5.dp
+                            ), value = tfName, onValueChange = { tfName = it })
+                    }
+                }
+                Card(
+                    modifier = Modifier.weight(0.5f),
+                    colors = CardDefaults.cardColors(
+                        contentColor = Color.White,
+                        containerColor = colorResource(R.color.yumusakLila)
+                    )
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text("Ürün Detay")
+                        TextField(
+                            singleLine = true,          // Tek satır
+                            maxLines = 1,
+                            placeholder = { Text("Ürün Detay") },
+                            colors = TextFieldDefaults.colors(
+                                disabledContainerColor = Color.Transparent,
+                                focusedContainerColor = Color.Transparent,
+                                focusedIndicatorColor = colorResource(R.color.tfColor),
+                                focusedLabelColor = Color.Black,
+                                focusedTextColor = Color.Black,
+                                unfocusedTextColor = Color.Black,
+                                unfocusedLabelColor = Color.Black,
+                                unfocusedContainerColor = Color.Transparent
+                            ),
+                            modifier = Modifier.padding(
+                                horizontal = 15.dp,
+                                vertical = 5.dp
+                            ),
+                            value = tfDesc, onValueChange = { tfDesc = it },
+                        )
+                    }
+                }
 
+            }
+            Row(modifier = Modifier.padding(vertical = 10.dp)) {
+                Card(
+                    modifier = Modifier
+                        .weight(0.5f)
+                        .padding(end = 5.dp),
+                    colors = CardDefaults.cardColors(
+                        contentColor = Color.White,
+                        containerColor = colorResource(R.color.yumusakSari)
+                    )
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text("Ürün Resim")
+                        TextField(
+                            singleLine = true,          // Tek satır
+                            maxLines = 1,
+                            placeholder = { Text("Ürün resmi") },
+                            colors = TextFieldDefaults.colors(
+                                disabledContainerColor = Color.Transparent,
+                                focusedContainerColor = Color.Transparent,
+                                focusedIndicatorColor = colorResource(R.color.tfColor),
+                                focusedLabelColor = Color.Black,
+                                focusedTextColor = Color.Black,
+                                unfocusedTextColor = Color.Black,
+                                unfocusedLabelColor = Color.Black,
+                                unfocusedContainerColor = Color.Transparent
+                            ),
+                            modifier = Modifier.padding(
+                                horizontal = 15.dp,
+                                vertical = 5.dp
+                            ), value = tfResim, onValueChange = { tfResim = it })
+                    }
+                }
+                Card(
+                    modifier = Modifier.weight(0.5f),
+                    colors = CardDefaults.cardColors(
+                        contentColor = Color.White,
+                        containerColor = colorResource(R.color.yumusakSeftali)
+                    )
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text("Ürün Fiyat")
+                        TextField(
+                            singleLine = true,          // Tek satır
+                            maxLines = 1,
+                            placeholder = { Text("Ürün Fiyat") },
+                            colors = TextFieldDefaults.colors(
+                                disabledContainerColor = Color.Transparent,
+                                focusedContainerColor = Color.Transparent,
+                                focusedIndicatorColor = colorResource(R.color.tfColor),
+                                focusedLabelColor = Color.Black,
+                                focusedTextColor = Color.Black,
+                                unfocusedTextColor = Color.Black,
+                                unfocusedLabelColor = Color.Black,
+                                unfocusedContainerColor = Color.Transparent
+                            ),
+                            modifier = Modifier.padding(
+                                horizontal = 15.dp,
+                                vertical = 5.dp
+                            ),
+                            value = tfPrice, onValueChange = { tfPrice = it },
+                        )
                     }
                 }
             }
+            Row {
+                Card(
+                    modifier = Modifier
+                        .weight(0.5f)
+                        .padding(end = 5.dp),
+                    colors = CardDefaults.cardColors(
+                        contentColor = Color.White,
+                        containerColor = colorResource(R.color.pastelmavi)
+                    )
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text("Ürün Stok")
+                        TextField(
+                            singleLine = true,          // Tek satır
+                            maxLines = 1,
+                            placeholder = { Text("Ürün Stok") },
+                            colors = TextFieldDefaults.colors(
+                                disabledContainerColor = Color.Transparent,
+                                focusedContainerColor = Color.Transparent,
+                                focusedIndicatorColor = colorResource(R.color.tfColor),
+                                focusedLabelColor = Color.Black,
+                                focusedTextColor = Color.Black,
+                                unfocusedTextColor = Color.Black,
+                                unfocusedLabelColor = Color.Black,
+                                unfocusedContainerColor = Color.Transparent
+                            ),
+                            modifier = Modifier.padding(
+                                horizontal = 15.dp,
+                                vertical = 5.dp
+                            ), value = tfStock, onValueChange = { tfStock = it })
+                    }
+                }
+            }
+            //kaydetme kısmı
+            Button(modifier = Modifier
+                .fillMaxWidth()
+                .padding(15.dp)
+                .align(alignment = Alignment.CenterHorizontally), onClick = {
+                viewModel.addProduct(
+                    product_name = tfName,
+                    product_desc = tfDesc,
+                    product_image = tfResim,
+                    product_price = tfPrice.toDouble(),
+                    product_stock = tfStock.toInt()
+                )
+                tfName = ""
+                tfDesc = ""
+                tfResim = ""
+                tfPrice = ""
+                tfStock = ""
+
+                Toast.makeText(context, "Ürün Eklendi", Toast.LENGTH_SHORT).show()
+            }) {
+                Text("Ürün Ekle")
+            }
+
         }
     }
 }
@@ -574,6 +714,7 @@ fun AdminUserPage() {
 
 @Composable
 fun AdminContentScreen(
+    viewModel: EcommerceViewModel,
     selectedIndex: Int,
     currentUsers: Users,
     orders: List<OrdersNew>,
@@ -587,7 +728,7 @@ fun AdminContentScreen(
             navController = navController
         )
 
-        1 -> AddPage()
+        1 -> AddPage(viewModel)
         2 -> AdminUserPage()
     }
 }

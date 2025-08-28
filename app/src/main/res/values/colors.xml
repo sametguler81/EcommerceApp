@@ -11,6 +11,10 @@
     <color name="tfBg">#F2F4F7</color>
     <color name="cardMusteri">#7FB77E</color>
     <color name="durumGuncelleme">#00E2FF</color>
-
+    <color name="yumusakYesil">#7EDAB1</color>
+    <color name="yumusakSeftali">#FFA07A</color>
+    <color name="yumusakLila">#AB82FF</color>
+    <color name="yumusakSari">#FFD966</color>
+    <color name="pastelmavi">#6699FF</color>
 
 </resources>

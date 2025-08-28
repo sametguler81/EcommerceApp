@@ -19,7 +19,18 @@ class EcommerceViewModel : ViewModel() {
     val orderStatus = repo.orderStatus
     val getOrdersNew = repo.ordersNew
 
+    fun addProduct(
+        product_name: String,
+        product_desc: String,
+        product_image: String,
+        product_price: Double,
+        product_stock: Int
+    ) {
+        viewModelScope.launch {
+            repo.addProduct(product_name, product_desc, product_image, product_price, product_stock)
+        }
 
+    }
 
     fun updateOrderStatus(order_id: Int, order_status: String) {
         viewModelScope.launch {

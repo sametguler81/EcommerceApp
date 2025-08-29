@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -35,10 +36,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.ShoppingCart
@@ -48,6 +51,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -457,13 +461,125 @@ fun userHomePage(viewModel: EcommerceViewModel, navController: NavController) {
 
 
 @Composable
-fun userProfilePage() {
+fun userProfilePage(viewModel: EcommerceViewModel) {
+    val currentUser = viewModel.currentUser.observeAsState().value
     Column(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("User Profile Page")
+        Divider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(1.dp), color = Color.White
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .border(
+                    width = 0.dp,
+                    shape = RoundedCornerShape(bottomStart = 100.dp, bottomEnd = 100.dp),
+                    color = Color.Transparent
+                )
+                .background(
+                    color = colorResource(R.color.tfColor),
+                    shape = RoundedCornerShape(bottomStart = 100.dp, bottomEnd = 100.dp),
+                )
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(120.dp)
+                    .align(Alignment.BottomCenter)
+                    .offset(y = 60.dp)
+                    .clip(CircleShape)
+                    .background(Color.White) // border efekti
+                    .padding(2.dp) // iç boşluk border etkisi için
+            ) {
+                Icon(
+                    imageVector = Icons.Default.AccountCircle,
+                    contentDescription = "userimg",
+                    tint = colorResource(R.color.tfColor),
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 75.dp)
+        ) {
+            LazyColumn {
+                item {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 7.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            modifier = Modifier
+                                .padding(start = 10.dp, end = 15.dp)
+                                .size(45.dp),
+                            imageVector = Icons.Default.AccountCircle,
+                            contentDescription = "user",
+                            tint = colorResource(R.color.tfColor)
+                        )
+                        Text("${currentUser!!.user_name}", fontSize = 20.sp)
+                    }
+                    Divider(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(1.dp), color = Color.LightGray
+                    )
+                }
+                item {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 7.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            modifier = Modifier
+                                .padding(start = 10.dp, end = 15.dp)
+                                .size(45.dp),
+                            imageVector = Icons.Default.Email,
+                            contentDescription = "user",
+                            tint = colorResource(R.color.tfColor)
+                        )
+                        Text("${currentUser!!.user_email}", fontSize = 20.sp)
+                    }
+                    Divider(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(1.dp), color = Color.LightGray
+                    )
+                }
+                item {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 7.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            modifier = Modifier
+                                .padding(start = 10.dp, end = 15.dp)
+                                .size(45.dp),
+                            imageVector = Icons.Default.Phone,
+                            contentDescription = "user",
+                            tint = colorResource(R.color.tfColor)
+                        )
+                        Text("${currentUser!!.user_phone}", fontSize = 20.sp)
+                    }
+                    Divider(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(1.dp), color = Color.LightGray
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -472,6 +588,6 @@ fun ContentScreen(index: Int, viewModel: EcommerceViewModel, navController: NavC
     when (index) {
         0 -> userHomePage(viewModel, navController)
         1 -> userCartPage(viewModel, navController)
-        2 -> userProfilePage()
+        2 -> userProfilePage(viewModel)
     }
 }

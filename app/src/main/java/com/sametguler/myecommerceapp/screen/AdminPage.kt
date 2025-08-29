@@ -5,6 +5,8 @@ import android.graphics.drawable.Icon
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,17 +14,22 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.BottomAppBar
@@ -30,6 +37,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -52,6 +60,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -699,14 +708,124 @@ fun AddPage(viewModel: EcommerceViewModel) {
 }
 
 @Composable
-fun AdminUserPage() {
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+fun AdminUserPage(viewModel: EcommerceViewModel) {
+    val currentUser = viewModel.currentUser.observeAsState().value
+    Column(
+        modifier = Modifier.fillMaxSize(),
+    ) {
+        Divider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(1.dp), color = Color.White
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .border(
+                    width = 0.dp,
+                    shape = RoundedCornerShape(bottomStart = 100.dp, bottomEnd = 100.dp),
+                    color = Color.Transparent
+                )
+                .background(
+                    color = colorResource(R.color.tfColor),
+                    shape = RoundedCornerShape(bottomStart = 100.dp, bottomEnd = 100.dp),
+                )
         ) {
-            Text("AdminUserPage")
+            Box(
+                modifier = Modifier
+                    .size(120.dp)
+                    .align(Alignment.BottomCenter)
+                    .offset(y = 60.dp)
+                    .clip(CircleShape)
+                    .background(Color.White) // border efekti
+                    .padding(2.dp) // iç boşluk border etkisi için
+            ) {
+                Icon(
+                    imageVector = Icons.Default.AccountCircle,
+                    contentDescription = "userimg",
+                    tint = colorResource(R.color.tfColor),
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 75.dp)
+        ) {
+            LazyColumn {
+                item {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 7.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            modifier = Modifier
+                                .padding(start = 10.dp, end = 15.dp)
+                                .size(45.dp),
+                            imageVector = Icons.Default.AccountCircle,
+                            contentDescription = "user",
+                            tint = colorResource(R.color.tfColor)
+                        )
+                        Text("${currentUser!!.user_name}", fontSize = 20.sp)
+                    }
+                    Divider(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(1.dp), color = Color.LightGray
+                    )
+                }
+                item {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 7.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            modifier = Modifier
+                                .padding(start = 10.dp, end = 15.dp)
+                                .size(45.dp),
+                            imageVector = Icons.Default.Email,
+                            contentDescription = "user",
+                            tint = colorResource(R.color.tfColor)
+                        )
+                        Text("${currentUser!!.user_email}", fontSize = 20.sp)
+                    }
+                    Divider(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(1.dp), color = Color.LightGray
+                    )
+                }
+                item {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 7.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            modifier = Modifier
+                                .padding(start = 10.dp, end = 15.dp)
+                                .size(45.dp),
+                            imageVector = Icons.Default.Phone,
+                            contentDescription = "user",
+                            tint = colorResource(R.color.tfColor)
+                        )
+                        Text("${currentUser!!.user_phone}", fontSize = 20.sp)
+                    }
+                    Divider(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(1.dp), color = Color.LightGray
+                    )
+                }
+            }
         }
     }
 }
@@ -729,6 +848,6 @@ fun AdminContentScreen(
         )
 
         1 -> AddPage(viewModel)
-        2 -> AdminUserPage()
+        2 -> AdminUserPage(viewModel)
     }
 }

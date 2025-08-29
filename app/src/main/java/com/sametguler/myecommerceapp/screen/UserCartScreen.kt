@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -26,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,6 +39,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.sametguler.myecommerceapp.R
 import com.sametguler.myecommerceapp.viewmodel.EcommerceViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun userCartPage(viewModel: EcommerceViewModel, navController: NavController) {
@@ -44,6 +50,9 @@ fun userCartPage(viewModel: EcommerceViewModel, navController: NavController) {
     val currentUser = viewModel.currentUser.observeAsState().value!!.user_id
     val context = LocalContext.current
     val orderStatus by viewModel.orderStatus.observeAsState()
+    var totalPrice by remember { mutableStateOf(0.00) }
+
+
     LaunchedEffect(Unit) {
         viewModel.getShoppingCart(currentUser)
     }
@@ -95,6 +104,16 @@ fun userCartPage(viewModel: EcommerceViewModel, navController: NavController) {
                             Column {
                                 IconButton(onClick = {
                                     viewModel.deleteShoppingCartItem(shopping_cart_id = shoppingCartNew[it].shopping_cart_id)
+                                    CoroutineScope(Dispatchers.Main).launch {
+                                        delay(400)
+                                        totalPrice = 0.00
+                                        shoppingCartNew.forEachIndexed { index, item ->
+                                            totalPrice += item.product_price
+                                        }
+
+                                    }
+
+
                                 }) {
                                     Icon(
                                         tint = Color.White,
@@ -107,22 +126,57 @@ fun userCartPage(viewModel: EcommerceViewModel, navController: NavController) {
                     }
                 }
             }
-            Button(modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp)
-                .align(alignment = Alignment.BottomCenter), onClick = {
-                shoppingCartNew.forEachIndexed { index, shoppingCartNew ->
-                    viewModel.addOrders(
-                        user_id = shoppingCartNew.user_id,
-                        product_id = shoppingCartNew.product_id,
-                        quantity = shoppingCartNew.quantity,
-                        total_price = shoppingCartNew.product_price
-                    )
-                    viewModel.deleteShoppingCartItem(shopping_cart_id = shoppingCartNew.shopping_cart_id)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp)
+                    .align(alignment = Alignment.BottomCenter)
+            ) {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    Card(
+                        colors = CardDefaults.cardColors(
+                            containerColor = colorResource(R.color.tfColor),
+                            contentColor = Color.White
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 10.dp)
+                    ) {
+                        Row(modifier = Modifier.padding(10.dp)) {
+                            LaunchedEffect(shoppingCartNew) {
+                                delay(400)
+                                totalPrice = 0.00
+                                shoppingCartNew.forEachIndexed { index, item ->
+                                    totalPrice += item.product_price
+                                }
+                            }
+                            Text("Toplam tutar: ${totalPrice}")
+                        }
+
+                    }
+                    Button(
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colorResource(R.color.tfColor),
+                            contentColor = Color.White
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth(), onClick = {
+                            shoppingCartNew.forEachIndexed { index, shoppingCartNew ->
+                                viewModel.addOrders(
+                                    user_id = shoppingCartNew.user_id,
+                                    product_id = shoppingCartNew.product_id,
+                                    quantity = shoppingCartNew.quantity,
+                                    total_price = shoppingCartNew.product_price
+                                )
+                                viewModel.deleteShoppingCartItem(shopping_cart_id = shoppingCartNew.shopping_cart_id)
+                            }
+                        }) {
+                        Text("Sipariş Oluştur")
+                    }
                 }
-            }) {
-                Text("Sipariş Oluştur")
+
             }
+
             LaunchedEffect(orderStatus) {
                 if (orderStatus == true) {
                     Toast.makeText(context, "Sipariş oluşturuldu!", Toast.LENGTH_SHORT)

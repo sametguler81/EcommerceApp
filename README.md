@@ -33,13 +33,13 @@ Admin tarafında ürün yönetimi, sipariş görüntüleme/düzenleme ve durum g
 
 ## 📱 Ekran Görüntüleri
 
-| Ürün Ekle | Admin Siparişler | Ürün Detayı |
-|-----------|-----------------|-------------|
-| ![](images/addProduct.png) | ![](images/adminorder.png) | ![](images/detay.png) |
+| Ana Sayfa | Ürün Ekle | Admin Siparişler |
+|-----------|-----------|-----------------|
+| ![](images/anasayfa.png) | ![](images/addProduct.png) | ![](images/adminorder.png) |
 
-| Sipariş Detayı | Sepet | Kullanıcı Sayfası |
-|----------------|-------|-------------------|
-| ![](images/orderdetail.png) | ![](images/sepet.png) | ![](images/userpage.png) |
+| Ürün Detayı | Sipariş Detayı | Sepet | Kullanıcı Sayfası |
+|-------------|----------------|-------|-------------------|
+| ![](images/detay.png) | ![](images/orderdetail.png) | ![](images/sepet.png) | ![](images/userpage.png) |
 
 ---
 

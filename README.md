@@ -48,4 +48,4 @@ Admin tarafında ürün yönetimi, sipariş görüntüleme/düzenleme ve durum g
 ### Mobil Uygulama
 1. Projeyi klonla:  
    ```bash
-   git clone https://github.com/kullaniciAdi/projeAdi.git
+   https://github.com/sametguler81/EcommerceApp.git
